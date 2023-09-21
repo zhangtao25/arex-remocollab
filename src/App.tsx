@@ -1,11 +1,11 @@
 // import SaveRequestModal from './libs/modal/request/save.tsx';
 // import SaveRequestModalPage from "./pages/modal/request/save.tsx";
 import { Suspense } from 'react';
-import { useRoutes } from 'react-router-dom';
+import { useNavigate, useRoutes } from 'react-router-dom';
 
 import routes from '~react-pages';
 
-function traverseTree(tree:any, currentPath = '', paths:any = []) {
+function traverseTree(tree: any, currentPath = '', paths: any = []) {
   if (tree instanceof Array) {
     tree.forEach((node) => {
       const subPath = `${currentPath}/${node.path}`;
@@ -24,12 +24,22 @@ function traverseTree(tree:any, currentPath = '', paths:any = []) {
 }
 
 const App = () => {
+  const nav = useNavigate();
   return (
     <div>
       <div style={{ padding: 0, minHeight: 360 }}>
         <div>
-          {traverseTree(routes).map((i:any,key:any) => {
-            return <a href={i} key={key}>{i}</a>;
+          {traverseTree(routes).map((i: any, key: any) => {
+            return (
+              <a
+                onClick={() => {
+                  nav(`${i}`);
+                }}
+                key={key}
+              >
+                {i}
+              </a>
+            );
           })}
         </div>
         <Suspense fallback={<p>Loading...</p>}>{useRoutes(routes)}</Suspense>

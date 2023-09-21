@@ -1,9 +1,12 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, FolderOutlined, SearchOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Button, Input, Modal, Space } from 'antd';
+import { Button, Input, Modal, Space, theme, Typography } from 'antd';
 import { FC } from 'react';
 
+const { Text } = Typography;
+const { useToken } = theme;
 const Footer = () => {
+  const token = useToken();
   return (
     <div
       css={css`
@@ -13,17 +16,19 @@ const Footer = () => {
     >
       <div
         css={css`
+          color: ${token.token.colorTextSecondary};
           &:hover {
-            text-decoration:underline;
+            text-decoration: underline;
             cursor: pointer;
           }
         `}
       >
         New Folder
       </div>
+
       <Space>
-        <Button type={'primary'}>确认</Button>
-        <Button>返回</Button>
+        <Button type={'primary'}>Save</Button>
+        <Button>Cancel</Button>
       </Space>
     </div>
   );
@@ -40,18 +45,65 @@ const SaveRequestModal: FC<{ open: boolean }> = ({ open }) => {
       name: 'test',
     },
   ];
-
+  const token = useToken();
   return (
-    <Modal title={'SAVE REQUEST'} width={650} open={open} footer={<Footer />}>
-      <Input placeholder={'Request name'} />
+    <Modal title={'SAVE REQUEST'} width={650} open={open} footer={<Footer />} closeIcon={false}>
+      {/*<p>触发覆盖率聚合</p>*/}
 
-      <div>Save to Select a collection/folder</div>
+      <div
+        css={css`
+          margin-bottom: 20px;
+        `}
+      >
+        <Text
+          type={'secondary'}
+          strong
+          css={css`
+            display: block;
+            padding: 10px 0;
+          `}
+        >
+          Request name
+        </Text>
+        <Input />
+      </div>
+
+      <Space
+        css={css`
+          //display: block;
+          //padding: 10px 0;
+          margin-bottom: 10px;
+        `}
+      >
+        <span
+          css={css`
+            color: rgb(107, 107, 107);
+            font-weight: 500;
+          `}
+        >
+          Save to
+        </span>
+        <span
+          css={css`
+            color: rgb(166, 166, 166);
+          `}
+        >
+          Select a collection/folder
+        </span>
+      </Space>
 
       <Input prefix={<SearchOutlined className='site-form-item-icon' />} />
 
       <div
         css={css`
-          border: 1px solid #eee;
+          transform: translateY(-5px);
+          border: 1px solid ${token.token.colorBorder};
+          border-bottom-left-radius: ${token.token.borderRadius}px;
+          border-bottom-right-radius: ${token.token.borderRadius}px;
+          border-top: none;
+          height: 360px;
+          margin-bottom: 30px;
+          padding-top: 5px;
         `}
       >
         {list.map((item, index) => {
@@ -59,6 +111,9 @@ const SaveRequestModal: FC<{ open: boolean }> = ({ open }) => {
             <div
               key={index}
               css={css`
+                padding: 0 10px;
+                height: 40px;
+                line-height: 40px;
                 display: flex;
                 justify-content: space-between;
                 .xiaojiantou {
@@ -73,8 +128,17 @@ const SaveRequestModal: FC<{ open: boolean }> = ({ open }) => {
                 }
               `}
             >
-              <span>{item.name}</span>
-              <span className={'xiaojiantou'}>小箭头</span>
+              <Space>
+                <FolderOutlined
+                  css={css`
+                    font-size: 16px;
+                  `}
+                />
+                <span>{item.name}</span>
+              </Space>
+              <span className={'xiaojiantou'}>
+                <CaretRightOutlined />
+              </span>
             </div>
           );
         })}

@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 import Pages from 'vite-plugin-pages';
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/arex-remocollab/',
   plugins: [
     react({
       jsxImportSource: '@emotion/react',
