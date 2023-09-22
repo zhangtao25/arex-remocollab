@@ -1,0 +1,77 @@
+[
+  {
+    "name": "k8s",
+    "item": [
+      {
+        "name": "pod",
+        "item": [
+          {
+            "name": "New Folder",
+            "item": [
+              {
+                "name": "ceshi",
+                "request": {
+                  "method": "GET",
+                  "header": []
+                },
+                "response": []
+              }
+            ]
+          },
+          {
+            "name": "读取指定的 Pod",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "url": {
+                "raw": "/api/v1/namespaces/{namespace}/pods/{name}",
+                "path": [
+                  "api",
+                  "v1",
+                  "namespaces",
+                  "{namespace}",
+                  "pods",
+                  "{name}"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "读取指定 Pod 的 ephemeralcontainers",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "/api/v1/namespaces/{namespace}/pods/{name}/ephemeralcontainers",
+                "path": [
+                  "api",
+                  "v1",
+                  "namespaces",
+                  "{namespace}",
+                  "pods",
+                  "{name}",
+                  "ephemeralcontainers"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "deployment",
+        "item": [
+          {
+            "name": "读取指定的 Deployment",
+            "request": {
+              "method": "GET",
+              "header": []
+            },
+            "response": []
+          }
+        ]
+      }
+    ]
+  }
+]
