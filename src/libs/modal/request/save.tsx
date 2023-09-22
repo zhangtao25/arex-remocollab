@@ -129,7 +129,28 @@ const SaveRequestModal: FC<{ open: boolean; treeData: TreeNode[] }> = ({ open, t
           `}
         >
           {/*Select a collection/folder*/}
-          <Breadcrumb items={(findPathByName(treeData, selectedKey)||[]).map((i) => ({ title: i }))} />
+          <Breadcrumb
+            items={(findPathByName(treeData, selectedKey) || []).map((i, index) => {
+              if (index < (findPathByName(treeData, selectedKey) || []).length - 1) {
+                return {
+                  title: (
+                    <span
+                      css={css`
+                        &:hover {
+                          text-decoration: underline;
+                          cursor: pointer;
+                        }
+                      `}
+                    >
+                      {i}
+                    </span>
+                  ),
+                  onClick: () => setSelectedKey(i),
+                };
+              }
+              return { title: i };
+            })}
+          />
         </span>
       </Space>
 
