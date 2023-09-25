@@ -48,7 +48,10 @@ function findPathByName(
 
 const { Text } = Typography;
 const { useToken } = theme;
-const Footer = () => {
+interface FooterProps {
+  onClose: () => void;
+}
+const Footer: FC<FooterProps> = ({ onClose }) => {
   const token = useToken();
   return (
     <div
@@ -71,35 +74,56 @@ const Footer = () => {
 
       <Space>
         <Button type={'primary'}>Save</Button>
-        <Button>Cancel</Button>
+        <Button
+          onClick={() => {
+            onClose();
+          }}
+        >
+          Cancel
+        </Button>
       </Space>
     </div>
   );
 };
 
-
 interface SaveRequestModalProps {
-  open: boolean
-  requestName:string
-  treeData: TreeNode[]
-  onSave:(folderKey:string)=>void
-  onCreateFolder:(newFolderName:string, parentFolderId:string)=>void
+  open: boolean;
+  requestName: string;
+  treeData: TreeNode[];
+  onSave: (folderKey: string) => void;
+  onCreateFolder: (newFolderName: string, parentFolderId: string) => void;
+  onClose: () => void;
 }
 
-const SaveRequestModal: FC<SaveRequestModalProps> = ({ open, treeData,requestName,onCreateFolder,onSave }) => {
+const SaveRequestModal: FC<SaveRequestModalProps> = ({
+  open,
+  treeData,
+  requestName,
+  onCreateFolder,
+  onSave,
+  onClose,
+}) => {
   const token = useToken();
-  const [selectedKey, setSelectedKey] = useState<string|undefined>(undefined);
+  const [selectedKey, setSelectedKey] = useState<string | undefined>(undefined);
   const selectedTreeData = useMemo(() => {
-    if (selectedKey){
+    if (selectedKey) {
       return findNodeByName(treeData, selectedKey)?.item || treeData;
-    } else{
-      return treeData
+    } else {
+      return treeData;
     }
-
   }, [treeData, selectedKey]);
 
   return (
-    <Modal title={'SAVE REQUEST'} width={650} open={open} footer={<Footer />} closeIcon={false}>
+    <Modal
+      title={'SAVE REQUEST'}
+      width={650}
+      open={open}
+      footer={<Footer onClose={onClose} />}
+      closeIcon={false}
+      onCancel={() => {
+        onClose();
+      }}
+    >
       <div
         css={css`
           margin-bottom: 20px;
@@ -137,31 +161,32 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({ open, treeData,requestNam
             display: flex;
           `}
         >
-          {
-            selectedKey?
-              <Breadcrumb
+          {selectedKey ? (
+            <Breadcrumb
               items={(findPathByName(treeData, selectedKey) || []).map((i, index) => {
                 if (index < (findPathByName(treeData, selectedKey) || []).length - 1) {
                   return {
                     title: (
                       <span
                         css={css`
-                        &:hover {
-                          text-decoration: underline;
-                          cursor: pointer;
-                        }
-                      `}
+                          &:hover {
+                            text-decoration: underline;
+                            cursor: pointer;
+                          }
+                        `}
                       >
-                      {i}
-                    </span>
+                        {i}
+                      </span>
                     ),
                     onClick: () => setSelectedKey(i),
                   };
                 }
                 return { title: i };
               })}
-            />:<Text type={'secondary'}>Select a collection/folder</Text>
-          }
+            />
+          ) : (
+            <Text type={'secondary'}>Select a collection/folder</Text>
+          )}
         </span>
       </Space>
 
