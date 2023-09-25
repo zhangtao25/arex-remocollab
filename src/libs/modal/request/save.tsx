@@ -5,6 +5,7 @@ import { FC, useMemo, useState } from 'react';
 
 import { ItemType, TreeNode } from '../../token.ts';
 import RequestItemDisplay from '../../widgets/RequestItemDisplay.tsx';
+import {useTranslation} from "react-i18next";
 
 function findNodeByName(tree: TreeNode[], nameToFind: string): TreeNode | null {
   for (const node of tree) {
@@ -53,6 +54,7 @@ interface FooterProps {
 }
 const Footer: FC<FooterProps> = ({ onClose }) => {
   const token = useToken();
+  const {t} = useTranslation()
   return (
     <div
       css={css`
@@ -69,17 +71,17 @@ const Footer: FC<FooterProps> = ({ onClose }) => {
           }
         `}
       >
-        New Folder
+        {t('new.folder')}
       </div>
 
       <Space>
-        <Button type={'primary'}>Save</Button>
+        <Button type={'primary'}>{t('save')}</Button>
         <Button
           onClick={() => {
             onClose();
           }}
         >
-          Cancel
+          {t('cancel')}
         </Button>
       </Space>
     </div>
@@ -104,6 +106,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
   onClose,
 }) => {
   const token = useToken();
+  const {t} = useTranslation()
   const [selectedKey, setSelectedKey] = useState<string | undefined>(undefined);
   const selectedTreeData = useMemo(() => {
     if (selectedKey) {
@@ -115,7 +118,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
 
   return (
     <Modal
-      title={'SAVE REQUEST'}
+      title={t('save.request')}
       width={650}
       open={open}
       footer={<Footer onClose={onClose} />}
@@ -137,7 +140,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
             padding: 10px 0;
           `}
         >
-          Request name
+          {t('save.name')}
         </Text>
         <Input />
       </div>
@@ -153,7 +156,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
             font-weight: 500;
           `}
         >
-          Save to
+          {t('save.to')}
         </span>
         <span
           css={css`
@@ -185,12 +188,12 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
               })}
             />
           ) : (
-            <Text type={'secondary'}>Select a collection/folder</Text>
+            <Text type={'secondary'}>{t('select.folder')}</Text>
           )}
         </span>
       </Space>
 
-      <Input prefix={<SearchOutlined />} />
+      <Input placeholder={t('search.folder')} prefix={<SearchOutlined />} />
 
       <div
         css={css`
