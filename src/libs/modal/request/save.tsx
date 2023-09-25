@@ -1,7 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { Breadcrumb, Button, Input, Modal, Space, theme, Typography } from 'antd';
-// import { DataNode } from 'antd/es/tree';
 import { FC, useMemo, useState } from 'react';
 
 import { ItemType, TreeNode } from '../../token.ts';
@@ -78,17 +77,29 @@ const Footer = () => {
   );
 };
 
-const SaveRequestModal: FC<{ open: boolean; treeData: TreeNode[] }> = ({ open, treeData }) => {
+
+interface SaveRequestModalProps {
+  open: boolean
+  requestName:string
+  treeData: TreeNode[]
+  onSave:(folderKey:string)=>void
+  onCreateFolder:(newFolderName:string, parentFolderId:string)=>void
+}
+
+const SaveRequestModal: FC<SaveRequestModalProps> = ({ open, treeData,requestName,onCreateFolder,onSave }) => {
   const token = useToken();
-  const [selectedKey, setSelectedKey] = useState('pod');
-  const dangqianList = useMemo(() => {
-    return findNodeByName(treeData, selectedKey)?.item || treeData;
+  const [selectedKey, setSelectedKey] = useState<string|undefined>(undefined);
+  const selectedTreeData = useMemo(() => {
+    if (selectedKey){
+      return findNodeByName(treeData, selectedKey)?.item || treeData;
+    } else{
+      return treeData
+    }
+
   }, [treeData, selectedKey]);
 
   return (
     <Modal title={'SAVE REQUEST'} width={650} open={open} footer={<Footer />} closeIcon={false}>
-      {/*<p>触发覆盖率聚合</p>*/}
-      {/*{JSON.stringify(treeData)}*/}
       <div
         css={css`
           margin-bottom: 20px;
@@ -109,8 +120,6 @@ const SaveRequestModal: FC<{ open: boolean; treeData: TreeNode[] }> = ({ open, t
 
       <Space
         css={css`
-          //display: block;
-          //padding: 10px 0;
           margin-bottom: 10px;
         `}
       >
@@ -128,33 +137,35 @@ const SaveRequestModal: FC<{ open: boolean; treeData: TreeNode[] }> = ({ open, t
             display: flex;
           `}
         >
-          {/*Select a collection/folder*/}
-          <Breadcrumb
-            items={(findPathByName(treeData, selectedKey) || []).map((i, index) => {
-              if (index < (findPathByName(treeData, selectedKey) || []).length - 1) {
-                return {
-                  title: (
-                    <span
-                      css={css`
+          {
+            selectedKey?
+              <Breadcrumb
+              items={(findPathByName(treeData, selectedKey) || []).map((i, index) => {
+                if (index < (findPathByName(treeData, selectedKey) || []).length - 1) {
+                  return {
+                    title: (
+                      <span
+                        css={css`
                         &:hover {
                           text-decoration: underline;
                           cursor: pointer;
                         }
                       `}
-                    >
+                      >
                       {i}
                     </span>
-                  ),
-                  onClick: () => setSelectedKey(i),
-                };
-              }
-              return { title: i };
-            })}
-          />
+                    ),
+                    onClick: () => setSelectedKey(i),
+                  };
+                }
+                return { title: i };
+              })}
+            />:<Text type={'secondary'}>Select a collection/folder</Text>
+          }
         </span>
       </Space>
 
-      <Input prefix={<SearchOutlined className='site-form-item-icon' />} />
+      <Input prefix={<SearchOutlined />} />
 
       <div
         css={css`
@@ -168,10 +179,9 @@ const SaveRequestModal: FC<{ open: boolean; treeData: TreeNode[] }> = ({ open, t
           padding-top: 5px;
         `}
       >
-        {dangqianList.map((item, index) => {
+        {selectedTreeData.map((item, index) => {
           return (
             <div
-              className={'qifei'}
               onClick={() => {
                 if (!item.request) {
                   setSelectedKey(item.name);
@@ -186,13 +196,13 @@ const SaveRequestModal: FC<{ open: boolean; treeData: TreeNode[] }> = ({ open, t
                 justify-content: space-between;
                 opacity: ${item.request ? 0.4 : 'unset'};
                 cursor: ${item.request ? 'default' : 'pointer'};
-                .xiaojiantou {
+                .right-arrow {
                   display: none;
                 }
                 ${!item.request
                   ? `&:hover {
                   background-color: #eee;
-                  .xiaojiantou {
+                  .right-arrow {
                     display: inline;
                   }
                 }`

@@ -1,0 +1,11 @@
+{
+  "save.request": "保存请求",
+  "save.name": "请求名",
+  "save.to": "保存到",
+  "select.folder": "选择一个文件夹",
+  "search.folder": "搜索文件夹",
+  "create": "创建",
+  "cancel": "返回",
+  "new.folder": "新建文件夹",
+  "folder.name": "文件夹名"
+}
