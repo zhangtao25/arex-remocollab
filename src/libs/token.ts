@@ -37,3 +37,22 @@ interface ApiUrl {
   raw: string;
   path: string[];
 }
+
+//颜色配置
+
+export enum BgColors {
+  system = 'system',
+  light = 'light',
+  dark = 'dark',
+}
+
+export enum AccentColors {
+  green = 'green',
+  teal = 'teal',
+  blue = 'blue',
+}
+
+export enum Locales {
+  cn = 'cn',
+  en = 'en',
+}

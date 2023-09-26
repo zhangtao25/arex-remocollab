@@ -1,28 +1,56 @@
-import {createContext, useState} from "react";
-// import {ConfigProvider} from "antd";
 import { ThemeProvider } from '@emotion/react';
+import { ConfigProvider, theme } from 'antd';
+import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
-import { Button, ConfigProvider, theme } from 'antd';
+import { createContext, useState } from 'react';
+
+import { AccentColors, BgColors, Locales } from './token.ts';
+
 const { useToken, darkAlgorithm } = theme;
 
+const locales = {
+  [Locales.cn]: zhCN,
+  [Locales.en]: enUS,
+};
 export const ArexConfigContext = createContext({});
 export const ArexConfigProvider = ({ children }: any) => {
   const { token } = useToken();
-  const [state, setState] = useState(0);
+  const [state, setState] = useState<{
+    bgColor: BgColors;
+    accentColor: AccentColors;
+    locale: Locales;
+  }>({
+    bgColor: BgColors.dark,
+    accentColor: AccentColors.blue,
+    locale: Locales.cn,
+  });
+
+  function genAlgorithm() {
+    if (state.bgColor === 'system') {
+      const themeMedia = window.matchMedia('(prefers-color-scheme: light)');
+      if (themeMedia.matches) {
+        return [];
+      } else {
+        return [darkAlgorithm];
+      }
+    } else if (state.bgColor === 'light') {
+      return [];
+    } else {
+      return [darkAlgorithm];
+    }
+  }
   return (
     <ArexConfigContext.Provider value={{ state, setState }}>
       <ConfigProvider
-        locale={zhCN}
+        locale={locales[state.locale]}
         theme={{
           token: {
-            colorPrimary: 'peachpuff',
+            colorPrimary: state.accentColor,
           },
-          algorithm: [darkAlgorithm],
+          algorithm: genAlgorithm(),
         }}
       >
-        <ThemeProvider theme={token}>
-          {children}
-        </ThemeProvider>
+        <ThemeProvider theme={token}>{children}</ThemeProvider>
       </ConfigProvider>
     </ArexConfigContext.Provider>
   );
