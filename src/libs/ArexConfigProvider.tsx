@@ -20,8 +20,8 @@ export const ArexConfigProvider = ({ children }: any) => {
     accentColor: AccentColors;
     locale: Locales;
   }>({
-    bgColor: BgColors.dark,
-    accentColor: AccentColors.blue,
+    bgColor: BgColors.light,
+    accentColor: AccentColors.teal,
     locale: Locales.cn,
   });
 

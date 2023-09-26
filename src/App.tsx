@@ -6,6 +6,7 @@ import routes from '~react-pages';
 
 import Settings from './components/Settings';
 import { ArexConfigProvider } from './libs/ArexConfigProvider.tsx';
+import {css} from "@emotion/react";
 function traverseTree(tree: any, currentPath = '', paths: any = []) {
   if (tree instanceof Array) {
     tree.forEach((node) => {
@@ -35,28 +36,7 @@ const App = () => {
     <div>
       <ArexConfigProvider>
         <div style={{ padding: 0, minHeight: 360 }}>
-          <Button
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            打开设置
-          </Button>
           <Settings open={open} onClose={onClose} />
-          <div>
-            {traverseTree(routes).map((i: any, key: any) => {
-              return (
-                <a
-                  onClick={() => {
-                    nav(`${i}`);
-                  }}
-                  key={key}
-                >
-                  {i}
-                </a>
-              );
-            })}
-          </div>
           <Suspense fallback={<p>Loading...</p>}>{useRoutes(routes)}</Suspense>
         </div>
       </ArexConfigProvider>
