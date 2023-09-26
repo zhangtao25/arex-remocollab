@@ -29,13 +29,17 @@ export const ArexConfigProvider = ({ children }: any) => {
     if (state.bgColor === 'system') {
       const themeMedia = window.matchMedia('(prefers-color-scheme: light)');
       if (themeMedia.matches) {
+        document.body.className = 'light-mode';
         return [];
       } else {
+        document.body.className = 'dark-mode';
         return [darkAlgorithm];
       }
     } else if (state.bgColor === 'light') {
+      document.body.className = 'light-mode';
       return [];
     } else {
+      document.body.className = 'dark-mode';
       return [darkAlgorithm];
     }
   }
