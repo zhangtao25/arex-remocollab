@@ -47,9 +47,15 @@ export enum BgColors {
 }
 
 export enum AccentColors {
-  green = 'green',
-  teal = 'teal',
-  blue = 'blue',
+  green = '#10b981',
+  teal = '#14b8a6',
+  blue = '#3b82f6',
+  indigo = '#6366f1',
+  purple = '#8b5cf6',
+  yellow = '#f59e0b',
+  orange = '#f97316',
+  red = '#ef4444',
+  pink = '#ec4899',
 }
 
 export enum Locales {

@@ -21,7 +21,7 @@ export const ArexConfigProvider = ({ children }: any) => {
     locale: Locales;
   }>({
     bgColor: BgColors.light,
-    accentColor: AccentColors.teal,
+    accentColor: AccentColors.indigo,
     locale: Locales.cn,
   });
 
