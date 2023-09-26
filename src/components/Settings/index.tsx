@@ -6,12 +6,13 @@ import t1 from '../../assets/imgs/t1.svg';
 import ThemeSettings from './Theme.tsx';
 import GeneralSettings from "./General.tsx";
 
-const Settings = () => {
+const Settings = ({open,onClose}) => {
   const [selectedKey, setSelectedKey] = useState('General');
   return (
     <Modal
+      onCancel={onClose}
       width={850}
-      open={true}
+      open={open}
       footer={false}
       css={css`
         .ant-modal-content {

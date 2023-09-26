@@ -1,6 +1,6 @@
 // import SaveRequestModal from './libs/modal/request/save.tsx';
 // import SaveRequestModalPage from "./pages/modal/request/save.tsx";
-import {ConfigProvider, RadioChangeEvent} from 'antd';
+import {Button, ConfigProvider, RadioChangeEvent} from 'antd';
 // import { ConfigProvider } from 'antd';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
@@ -9,7 +9,7 @@ import { useNavigate, useRoutes } from 'react-router-dom';
 
 import routes from '~react-pages';
 
-import Index from './components/Settings';
+import Settings from './components/Settings';
 import type { Locale } from 'antd/es/locale';
 function traverseTree(tree: any, currentPath = '', paths: any = []) {
   if (tree instanceof Array) {
@@ -39,11 +39,18 @@ const App = () => {
     // const localeValue = e.target.value;
     setLocal(value);
   };
+  const [open,setOpen] = useState(false);
+  function onClose() {
+    setOpen(false);
+  }
   return (
     <div>
       <ConfigProvider locale={locale}>
         <div style={{ padding: 0, minHeight: 360 }}>
-          <Index />
+          <Button onClick={()=>{
+            setOpen(true)
+          }}>打开设置</Button>
+          <Settings open={open} onClose={onClose} />
           <div>
             {traverseTree(routes).map((i: any, key: any) => {
               return (
