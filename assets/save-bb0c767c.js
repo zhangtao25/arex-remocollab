@@ -1,0 +1,1 @@
+import{r as s,a as o,j as a,B as r}from"./index-f0c350f6.js";import{u as n,t as u,S as l}from"./mock-4f860936.js";const p=()=>{const[t,e]=s.useState(!0);return n(),o("div",{children:[a(r,{onClick:()=>{e(!0)},children:"Save As"}),a(l,{treeData:u,open:t,requestName:"",onCreateFolder:()=>{},onSave:d=>{},onClose:()=>{e(!1)}})]})};export{p as default};
