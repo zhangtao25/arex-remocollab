@@ -21,6 +21,7 @@ export enum ItemType {
 }
 
 export interface TreeNode {
+  key: string;
   name: string;
   item?: TreeNode[]; // 递归定义，用于表示子节点
   request?: ApiRequestData;

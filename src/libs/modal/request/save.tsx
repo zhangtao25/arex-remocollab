@@ -1,43 +1,47 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { FolderOutlined, SearchOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Breadcrumb, Button, Input, Modal, Space, theme, Typography } from 'antd';
-import { FC, useMemo, useState } from 'react';
+import { Breadcrumb, Button, Input, InputRef, Modal, Space, Spin, theme, Typography } from 'antd';
+import { FC, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ItemType, TreeNode } from '../../token.ts';
 import RequestItemDisplay from '../../widgets/RequestItemDisplay.tsx';
-import {useTranslation} from "react-i18next";
 
-function findNodeByName(tree: TreeNode[], nameToFind: string): TreeNode | null {
+function findNodeByKey(tree: TreeNode[], nameToFind: string): TreeNode | null {
   for (const node of tree) {
-    if (node.name === nameToFind) {
+    if (node.key === nameToFind) {
       return node; // 如果找到匹配的节点，返回该节点
     }
-
     if (node.item) {
-      const foundNode = findNodeByName(node.item, nameToFind); // 递归搜索子节点
+      const foundNode = findNodeByKey(node.item, nameToFind); // 递归搜索子节点
       if (foundNode) {
         return foundNode; // 如果在子节点中找到匹配的节点，返回该节点
       }
     }
   }
-
   return null; // 如果没有找到匹配的节点，返回 null
 }
 
-function findPathByName(
+function findPathByKey(
   tree: TreeNode[],
   nameToFind: string,
-  currentPath: string[] = [],
-): string[] | null {
-  for (const [index, node] of tree.entries()) {
-    const nodePath = [...currentPath, node.name]; // 更新当前节点的路径
+  currentPath: { name: string; key: string }[] = [],
+): any[] | null {
+  for (const [_, node] of tree.entries()) {
+    const nodePath = [
+      ...currentPath,
+      {
+        key: node.key,
+        name: node.name,
+      },
+    ]; // 更新当前节点的路径
 
-    if (node.name === nameToFind) {
+    if (node.key === nameToFind) {
       return nodePath; // 如果找到匹配的节点，返回路径
     }
 
     if (node.item) {
-      const foundPath = findPathByName(node.item, nameToFind, nodePath); // 递归搜索子节点
+      const foundPath = findPathByKey(node.item, nameToFind, nodePath); // 递归搜索子节点
       if (foundPath) {
         return foundPath; // 如果在子节点中找到匹配的节点，返回路径
       }
@@ -51,10 +55,12 @@ const { Text } = Typography;
 const { useToken } = theme;
 interface FooterProps {
   onClose: () => void;
+  onSave: () => void;
+  onNewFolder: () => void;
 }
-const Footer: FC<FooterProps> = ({ onClose }) => {
+const Footer: FC<FooterProps> = ({ onClose, onSave, onNewFolder }) => {
   const token = useToken();
-  const {t} = useTranslation()
+  const { t } = useTranslation();
   return (
     <div
       css={css`
@@ -70,12 +76,17 @@ const Footer: FC<FooterProps> = ({ onClose }) => {
             cursor: pointer;
           }
         `}
+        onClick={() => {
+          onNewFolder();
+        }}
       >
         {t('new.folder')}
       </div>
 
       <Space>
-        <Button type={'primary'}>{t('save')}</Button>
+        <Button type={'primary'} onClick={onSave}>
+          {t('save')}
+        </Button>
         <Button
           onClick={() => {
             onClose();
@@ -92,8 +103,8 @@ interface SaveRequestModalProps {
   open: boolean;
   requestName: string;
   treeData: TreeNode[];
-  onSave: (folderKey: string) => void;
-  onCreateFolder: (newFolderName: string, parentFolderId: string) => void;
+  onSave: (folderKey: string, requestName: string) => void;
+  onCreateFolder: (newFolderName: string, parentFolderKey: string) => Promise<string>;
   onClose: () => void;
 }
 
@@ -105,23 +116,42 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
   onSave,
   onClose,
 }) => {
+  const [newFolderMode, setNewFolderMode] = useState(false);
+  const [loding, setLoding] = useState(false);
+  const requestNameInputRef = useRef<InputRef>(null);
   const token = useToken();
-  const {t} = useTranslation()
+  const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<string | undefined>(undefined);
   const selectedTreeData = useMemo(() => {
+    // 这里不能引用传递
+    let zuizhong = [];
     if (selectedKey) {
-      return findNodeByName(treeData, selectedKey)?.item || treeData;
+      zuizhong = findNodeByKey(treeData, selectedKey)?.item || treeData;
     } else {
-      return treeData;
+      zuizhong = treeData;
     }
-  }, [treeData, selectedKey]);
+    if (loding) {
+      return zuizhong.concat({ name: 'test', key: 'key', added: true });
+    }
+    return zuizhong;
+  }, [treeData, selectedKey, loding]);
 
   return (
     <Modal
       title={t('save.request')}
       width={650}
       open={open}
-      footer={<Footer onClose={onClose} />}
+      footer={
+        <Footer
+          onNewFolder={() => {
+            setNewFolderMode(true);
+          }}
+          onClose={onClose}
+          onSave={() => {
+            onSave(selectedKey, requestNameInputRef?.current?.input?.value || '');
+          }}
+        />
+      }
       closeIcon={false}
       onCancel={() => {
         onClose();
@@ -142,7 +172,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
         >
           {t('save.name')}
         </Text>
-        <Input />
+        <Input defaultValue={requestName} ref={requestNameInputRef} />
       </div>
 
       <Space
@@ -166,8 +196,8 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
         >
           {selectedKey ? (
             <Breadcrumb
-              items={(findPathByName(treeData, selectedKey) || []).map((i, index) => {
-                if (index < (findPathByName(treeData, selectedKey) || []).length - 1) {
+              items={(findPathByKey(treeData, selectedKey) || []).map((i, index) => {
+                if (index < (findPathByKey(treeData, selectedKey) || []).length - 1) {
                   return {
                     title: (
                       <span
@@ -178,13 +208,13 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
                           }
                         `}
                       >
-                        {i}
+                        {i.name}
                       </span>
                     ),
-                    onClick: () => setSelectedKey(i),
+                    onClick: () => setSelectedKey(i.key),
                   };
                 }
-                return { title: i };
+                return { title: i.name };
               })}
             />
           ) : (
@@ -207,12 +237,45 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
           padding-top: 5px;
         `}
       >
+        {newFolderMode && (
+          <Space
+            css={css`
+              padding: 6px 10px;
+            `}
+          >
+            <FolderOutlined />
+            <Input
+              placeholder={t('folder.name')}
+              size={'small'}
+              css={css`
+                width: 420px;
+              `}
+            />
+            <Button
+              size={'small'}
+              onClick={() => {
+                setLoding(true);
+                setNewFolderMode(false);
+                onCreateFolder(
+                  requestNameInputRef?.current?.input?.value || '',
+                  selectedKey || '',
+                ).then((folderID) => {
+                  setSelectedKey(folderID);
+                  setLoding(false);
+                });
+              }}
+            >
+              Create
+            </Button>
+            <Button size={'small'}>Cancel</Button>
+          </Space>
+        )}
         {selectedTreeData.map((item, index) => {
           return (
             <div
               onClick={() => {
                 if (!item.request) {
-                  setSelectedKey(item.name);
+                  setSelectedKey(item.key);
                 }
               }}
               key={index}
@@ -237,11 +300,13 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
                   : null}
               `}
             >
-              <RequestItemDisplay
-                itemType={item.request ? ItemType.REQUEST : ItemType.FOLDER}
-                name={item.name}
-                request={item.request}
-              />
+              <Spin spinning={Boolean(item.added)}>
+                <RequestItemDisplay
+                  itemType={item.request ? ItemType.REQUEST : ItemType.FOLDER}
+                  name={item.name}
+                  request={item.request}
+                />
+              </Spin>
             </div>
           );
         })}

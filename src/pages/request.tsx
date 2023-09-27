@@ -7,9 +7,10 @@ import { ArexConfigContext } from '../libs/ArexConfigProvider.tsx';
 import CollectionMenus from '../libs/menus/collection';
 import SaveRequestModal from '../libs/modal/request/save.tsx';
 import { BgColors, Locales } from '../libs/token.ts';
-import treeData from '../mock.json';
+import dTreeData from '../mock.json';
 
 const Request = () => {
+  const [treeData, setTreeData] = useState(dTreeData);
   const [open, setOpen] = useState(false);
   const { state, setState } = useContext<any>(ArexConfigContext);
   function onChangeTheme(theme: BgColors) {
@@ -94,9 +95,42 @@ const Request = () => {
           <SaveRequestModal
             treeData={treeData}
             open={open}
-            requestName={''}
-            onCreateFolder={() => {}}
-            onSave={(data) => {}}
+            requestName={'test'}
+            onCreateFolder={(newFolderName, parentFolderKey) => {
+              const id = Math.random().toString(36).substr(2, 9);
+              function insertNode(parentID, name) {
+                const newNode = {
+                  key: id, // 生成一个随机key
+                  name: name,
+                  item: [], // 新节点没有子节点
+                };
+                function insertHelper(node) {
+                  if (node.key === parentID) {
+                    node.item.push(newNode); // 将新节点插入到父节点下
+                    return true; // 找到并插入了节点，返回true
+                  }
+                  if (node.item) {
+                    for (let i = 0; i < node.item.length; i++) {
+                      if (insertHelper(node.item[i])) {
+                        return true; // 递归查找子节点，找到并插入了节点，返回true
+                      }
+                    }
+                  }
+                  return false; // 没有找到对应的节点，返回false
+                }
+                insertHelper({ name: 'root', key: 'root', item: dTreeData }); // 调用辅助函数插入节点
+                return dTreeData; // 返回新的treeData
+              }
+              return new Promise((resolve) => {
+                setTimeout(() => {
+                  setTreeData(insertNode(parentFolderKey, newFolderName));
+                  resolve(id);
+                }, 500);
+              });
+            }}
+            onSave={(folderKey, requestName) => {
+              console.log(folderKey, requestName);
+            }}
             onClose={() => {
               setOpen(false);
             }}

@@ -1,3 +1,4 @@
+import { FolderOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { FC } from 'react';
 
@@ -22,7 +23,16 @@ const RequestDisplay: FC<{ request: ApiRequestData; name: string }> = ({ request
   );
 };
 const FolderDisplay: FC<{ name: string }> = ({ name }) => {
-  return <div>{name}</div>;
+  return (
+    <div>
+      <FolderOutlined
+        css={css`
+          margin-right: 8px;
+        `}
+      />
+      {name}
+    </div>
+  );
 };
 
 // itemType key
