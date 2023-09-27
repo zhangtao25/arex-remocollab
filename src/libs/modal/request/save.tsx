@@ -119,6 +119,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
   const [newFolderMode, setNewFolderMode] = useState(false);
   const [loding, setLoding] = useState(false);
   const requestNameInputRef = useRef<InputRef>(null);
+  const folderNameInputRef = useRef<InputRef>(null);
   const token = useToken();
   const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<string | undefined>(undefined);
@@ -245,6 +246,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
           >
             <FolderOutlined />
             <Input
+              ref={folderNameInputRef}
               placeholder={t('folder.name')}
               size={'small'}
               css={css`
@@ -257,7 +259,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
                 setLoding(true);
                 setNewFolderMode(false);
                 onCreateFolder(
-                  requestNameInputRef?.current?.input?.value || '',
+                  folderNameInputRef?.current?.input?.value || '',
                   selectedKey || '',
                 ).then((folderID) => {
                   setSelectedKey(folderID);
