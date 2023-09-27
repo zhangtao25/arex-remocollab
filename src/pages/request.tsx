@@ -6,17 +6,19 @@ import { useContext, useState } from 'react';
 import { ArexConfigContext } from '../libs/ArexConfigProvider.tsx';
 import CollectionMenus from '../libs/menus/collection';
 import SaveRequestModal from '../libs/modal/request/save.tsx';
+import { BgColors, Locales } from '../libs/token.ts';
 import treeData from '../mock.json';
+
 const Request = () => {
   const [open, setOpen] = useState(false);
-  const { state, setState } = useContext(ArexConfigContext);
-  function onChangeTheme(theme) {
+  const { state, setState } = useContext<any>(ArexConfigContext);
+  function onChangeTheme(theme: BgColors) {
     setState({
       ...state,
       bgColor: theme,
     });
   }
-  function onChangeLocale(locale) {
+  function onChangeLocale(locale: Locales) {
     setState({
       ...state,
       locale: locale,
@@ -42,16 +44,16 @@ const Request = () => {
 
         {/*右*/}
         <div>
-          {['cn', 'en', 'light', 'dark'].map((item,index) => {
+          {['cn', 'en', 'light', 'dark'].map((item, index) => {
             return (
               (['cn', 'en'].includes(item) ? locale : theme) === item && (
                 <Button
                   key={index}
                   onClick={() => {
                     if (['cn', 'en'].includes(item)) {
-                      onChangeLocale(item == 'cn' ? 'en' : 'cn');
+                      onChangeLocale(item === Locales.cn ? Locales.en : Locales.cn);
                     } else {
-                      onChangeTheme(item == 'light' ? 'dark' : 'light');
+                      onChangeTheme(item === BgColors.light ? BgColors.dark : BgColors.light);
                     }
                   }}
                   css={css`

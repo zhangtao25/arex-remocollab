@@ -100,3 +100,21 @@ export function collectionOriginalTreeToAntdTreeData(
   });
   return nodeList;
 }
+
+export function postmanToAntdTreeData(tree: any, nodeList: NodeObject[] = []): NodeObject[] {
+  const nodes = tree;
+  Object.keys(nodes).forEach((value, index) => {
+    nodeList.push({
+      id: nodes[value].infoId,
+      children: [],
+      key: nodes[value].name,
+      request: nodes[value].request,
+      name: nodes[value].name,
+    });
+    if (nodes[value].item && Object.keys(nodes[value].item).length > 0) {
+      postmanToAntdTreeData(nodes[value].item, nodeList[index].children);
+    }
+  });
+  console.log(nodeList);
+  return nodeList;
+}
