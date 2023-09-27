@@ -1,1 +1,0 @@
-import{e as s,M as o,G as a,O as r}from"./index-aa1e3577.js";import{u as n,t as u,S as l}from"./save-4701cd0a.js";const p=()=>{const[t,e]=s.useState(!0);return n(),o("div",{children:[a(r,{onClick:()=>{e(!0)},children:"Save As"}),a(l,{treeData:u,open:t,requestName:"",onCreateFolder:()=>{},onSave:d=>{},onClose:()=>{e(!1)}})]})};export{p as default};
