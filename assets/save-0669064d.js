@@ -1,0 +1,1 @@
+import{r as s,P as o,N as a,V as r}from"./index-71ae8583.js";import{u as n,t as u,S as l}from"./save-fba3c992.js";const p=()=>{const[t,e]=s.useState(!0);return n(),o("div",{children:[a(r,{onClick:()=>{e(!0)},children:"Save As"}),a(l,{treeData:u,open:t,requestName:"",onCreateFolder:()=>{},onSave:d=>{},onClose:()=>{e(!1)}})]})};export{p as default};
