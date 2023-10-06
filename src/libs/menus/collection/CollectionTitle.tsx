@@ -2,7 +2,6 @@ import { ItemType, RequestMethods } from '../../token.ts';
 import RequestItemDisplay from '../../widgets/RequestItemDisplay.tsx';
 
 function CollectionTitle({data}) {
-  console.log(data, 'data')
   const item = data
   return (
     <div>

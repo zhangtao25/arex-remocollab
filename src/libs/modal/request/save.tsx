@@ -139,6 +139,7 @@ const SaveRequestModal: FC<SaveRequestModalProps> = ({
 
   return (
     <Modal
+      centered
       title={t('save.request')}
       width={650}
       open={open}

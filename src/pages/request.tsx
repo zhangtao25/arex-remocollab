@@ -8,6 +8,10 @@ import CollectionMenus from '../libs/menus/collection';
 import SaveRequestModal from '../libs/modal/request/save.tsx';
 import { BgColors, Locales } from '../libs/token.ts';
 import dTreeData from '../mock.json';
+import SmartLink from '../libs/smart/Link.tsx';
+import Icon from "@ant-design/icons";
+import IconsEnvironment from "../libs/icons/Environment.tsx";
+import IconsCollection from "../libs/icons/Collection.tsx";
 
 const Request = () => {
   const [treeData, setTreeData] = useState(dTreeData);
@@ -81,7 +85,29 @@ const Request = () => {
         }}
       >
         <Allotment.Pane preferredSize={360}>
-          <CollectionMenus />
+
+          <SmartLink
+            defaultValue={'MenuTypeEnum.Collection'}
+            // defaultValue={getMenuTypeByPageType(params.paneType)}
+            items={[
+              {
+                label: 'Collection',
+                icon: <Icon component={IconsCollection} />,
+                key: 'MenuTypeEnum.Collection',
+                children: <CollectionMenus/>,
+              },
+              {
+                label: 'Environment',
+                icon: <Icon component={IconsEnvironment} />,
+                key: 'MenuTypeEnum.Environment',
+                children: (
+                  <div />
+                ),
+              },
+            ]}
+          />
+
+          {/*<CollectionMenus />*/}
         </Allotment.Pane>
         <Allotment.Pane>
           {/*treeData是postman类型，需要转一下*/}
